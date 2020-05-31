@@ -15,6 +15,10 @@ Remove all and install new cli
 #  npx react-native init rnanimations
 ```
 
+## Image
+
+![sample preview](./assets/images/sample.png)
+
 ## Links sorces
 
 - [Tutorial](https://www.youtube.com/watch?v=dXVgb3igGJ4&list=PLYxzS__5yYQmdfEyKDrlG5E0F0u7_iIUo) - Codedamn react animation
