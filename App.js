@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Easing,
+  PanResponder,
 } from 'react-native';
 
 const App = () => {
@@ -18,6 +19,25 @@ const App = () => {
   const spinLoop = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const moveXY = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+
+  const pan = useRef(new Animated.ValueXY()).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        pan.setOffset({
+          x: pan.x._value,
+          y: pan.y._value,
+        });
+      },
+      onPanResponderMove: Animated.event([null, {dx: pan.x, dy: pan.y}], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: () => {
+        pan.flattenOffset();
+      },
+    }),
+  ).current;
 
   useEffect(() => {
     Animated.loop(
@@ -158,6 +178,15 @@ const App = () => {
         <Text style={styles.label}>Fadein/out loop</Text>
 
         <Animated.View
+          style={{
+            transform: [{translateX: pan.x}, {translateY: pan.y}],
+          }}
+          {...panResponder.panHandlers}>
+          <View style={styles.sphere} />
+        </Animated.View>
+        <Text style={styles.label}>Pan</Text>
+
+        <Animated.View
           style={{transform: [{translateX: moveXY.x, translateY: moveXY.y}]}}>
           <View style={styles.sphere} />
         </Animated.View>
@@ -169,7 +198,6 @@ const App = () => {
         onPress={handleMoveOnClick}>
         <Text>MOVE</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         style={[styles.btn, styles.topRight]}
         onPress={handleResetOnClick}>
