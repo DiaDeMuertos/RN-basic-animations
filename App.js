@@ -19,6 +19,8 @@ const App = () => {
   const spinLoop = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const moveXY = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
+  const opacityP = useRef(new Animated.Value(0)).current;
+  const spinP = useRef(new Animated.Value(0)).current;
 
   const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
@@ -78,6 +80,11 @@ const App = () => {
     outputRange: ['0deg', '360deg'],
   });
 
+  const spinPInterpolate = spinP.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
   const handleResetOnClick = () => {
     Animated.timing(move, {
       toValue: 0,
@@ -103,6 +110,19 @@ const App = () => {
       easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
+
+    Animated.parallel([
+      Animated.timing(opacityP, {
+        toValue: 0,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(spinP, {
+        toValue: 0,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
     Animated.timing(moveXY, {
       toValue: {x: 0, y: 0},
@@ -136,6 +156,19 @@ const App = () => {
       easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
+
+    Animated.parallel([
+      Animated.timing(opacityP, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(spinP, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
     Animated.timing(moveXY, {
       toValue: {x: 100, y: 100},
@@ -185,6 +218,16 @@ const App = () => {
           <View style={styles.sphere} />
         </Animated.View>
         <Text style={styles.label}>Pan</Text>
+
+        <Animated.View
+          style={{
+            opacity: opacityP,
+            transform: [{rotate: spinPInterpolate}],
+          }}
+          {...panResponder.panHandlers}>
+          <View style={styles.square} />
+        </Animated.View>
+        <Text style={styles.label}>Fadein/out and spin parallet</Text>
 
         <Animated.View
           style={{transform: [{translateX: moveXY.x, translateY: moveXY.y}]}}>
